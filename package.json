@@ -1,0 +1,22 @@
+{
+  "name": "genal-promise",
+  "version": "1.0.0",
+  "description": "- 原文: [https://promisesaplus.com/](https://promisesaplus.com/)\r - 翻译: [https://www.ituring.com.cn/article/66566#gotocomment](https://www.ituring.com.cn/article/66566#gotocomment)",
+  "main": "index.js",
+  "scripts": {
+    "test": "promises-aplus-tests promise"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/genaller/genal-promise.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/genaller/genal-promise/issues"
+  },
+  "homepage": "https://github.com/genaller/genal-promise#readme",
+  "dependencies": {
+    "promises-aplus-tests": "^2.1.2"
+  }
+}
