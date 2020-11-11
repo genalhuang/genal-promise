@@ -12,6 +12,10 @@ class Promise {
 
     let resolve = (value) => {
       if(this.status === PENDING) {
+        if(value instanceof Promise){
+          // 递归解析 
+          return value.then(resolve,reject)
+        }
         this.status = FULFILLED;
         this.value = value;
         this.onResolveCallbacks.forEach(fn=>fn())
@@ -120,12 +124,77 @@ function resolvePromise(promise2, x, resolve, reject) {
   }
 }
 
+Promise.prototype.finally = function(callback) {
+  return this.then(value => {
+    return Promise.resolve(callback()).then(()=>value);
+  },(reason) => {
+    return Promise.resolve(callback()).then(() => {throw reason});
+  })
+}
 
 
 
 
 
 
+Promise.all = function(values) {
+  if(!Array.isArray(values)) {
+    const type = typeof values;
+    return new TypeError(`TypeError: ${type} ${values} is not iterable`)
+  }
+  return new Promise((resolve, reject)=> {
+    let resultArr = [];
+    let orderIndex = 0;
+    const processResultByKey = (value, index) => {
+      resultArr[index] = value;
+      if(++orderIndex === values.length) {
+        resolve(resultArr)
+      }
+    }
+
+    for(let i=0;i<values.length;i++) {
+      let value = values[i]
+      if(value && typeof value.then === 'function') {
+        value.then(value=>{
+          processResultByKey(value, i)
+        }, reject)
+      } else {
+        processResultByKey(value, i)
+      }
+    }
+  })
+}
+
+Promise.race = function(promises) {
+  return new Promise((resolve, reject) => {
+    for(let i=0;i<promises.length;i++) {
+      let val = promises[i];
+      if(val && typeof val.then === 'function') {
+        val.then(resolve,reject)
+      } else {
+        resolve(val)
+      }
+    }
+  })
+}
+
+let p1 = new Promise((resolve, reject) => {
+  setTimeout(() => {
+    resolve('ok1');
+  }, 1001);
+})
+
+let p2 = new Promise((resolve, reject) => {
+  setTimeout(() => {
+    reject('ok2');
+  }, 1000);
+})
+
+Promise.race([p1,p2]).then(data => {
+  console.log('resolve', data);
+}, err => {
+  console.log('reject', err);
+})
 
 
 
