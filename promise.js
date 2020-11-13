@@ -65,11 +65,12 @@ class Promise {
     this.onRejectedCallbacks = [];
 
     let resolve = (value) => {
+      console.log(value)
+      if(value instanceof Promise){
+        // 递归解析 
+        return value.then(resolve,reject)
+      }
       if (this.status === PENDING) {
-        if (value instanceof Promise) {
-          // 递归解析 
-          return value.then(resolve, reject)
-        }
         this.status = FULFILLED;
         this.value = value;
         this.onResolveCallbacks.forEach(fn => fn())
@@ -191,17 +192,17 @@ function resolvePromise(promise2, x, resolve, reject) {
 
 
 // 测试代码
-Promise.resolve(456).finally(() => {
-  return new Promise((resolve, reject) => {
-    setTimeout(() => {
-      resolve(123)
-    }, 3000);
-  })
-}).then(data => {
-  console.log(data, 'success')
-}).catch(err => {
-  console.log(err, 'error')
-})
+// Promise.resolve(456).finally(() => {
+//   return new Promise((resolve, reject) => {
+//     setTimeout(() => {
+//       resolve(123)
+//     }, 3000);
+//   })
+// }).then(data => {
+//   console.log(data, 'success')
+// }).catch(err => {
+//   console.log(err, 'error')
+// })
 
 
 // let p1 = new Promise((resolve, reject) => {
@@ -240,7 +241,13 @@ Promise.resolve(456).finally(() => {
 //   console.log('reject', err);
 // })
 
-
+new Promise(a=>{
+  a({
+    then:a=>a('asdf')
+  })
+}).then(b=>{
+  console.log(b)
+})
 
 
 
